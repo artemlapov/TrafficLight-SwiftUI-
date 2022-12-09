@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var opacityOfYellow = 0.5
     @State var opacityOfGreen = 0.5
     @State var buttonText = "START"
-    @State var numberOfClicks = 0
+    @State private var currentLight = CurrentLight.green
     let lightIsOn = 1.0
     let lightIsOff = 0.5
 
@@ -21,7 +21,9 @@ struct ContentView: View {
             ColorCircleView(circleColor: .red, circleOpacity: opacityOfRed)
             ColorCircleView(circleColor: .yellow, circleOpacity: opacityOfYellow)
             ColorCircleView(circleColor: .green, circleOpacity: opacityOfGreen)
+
             Spacer()
+
             Button(action: buttonDidTapped) {
                 Text(buttonText)
                     .font(.title)
@@ -30,6 +32,7 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             .clipShape(Capsule())
             .shadow(radius: 20)
+            .overlay(Capsule().stroke(Color.white, lineWidth: 1))
         }
         .padding()
     }
@@ -38,18 +41,25 @@ struct ContentView: View {
         if buttonText == "START" {
             buttonText = "NEXT"
         }
-        numberOfClicks += 1
-        switch numberOfClicks % 3 {
-        case 1:
+
+        switch currentLight {
+        case .green:
             opacityOfRed = lightIsOn
             opacityOfGreen = lightIsOff
-        case 2:
+            currentLight = .red
+        case .red:
             opacityOfYellow = lightIsOn
             opacityOfRed = lightIsOff
-        default:
+            currentLight = .yellow
+        case .yellow:
             opacityOfGreen = lightIsOn
             opacityOfYellow = lightIsOff
+            currentLight = .green
         }
+    }
+
+    private enum CurrentLight {
+        case red, yellow, green
     }
 }
 
